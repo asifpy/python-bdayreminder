@@ -15,7 +15,7 @@ c.execute("DROP TABLE IF EXISTS friend")
 
 # Create table
 c.execute('''CREATE TABLE
-             friend(name text, birth_date date, email text)''')
+             friend(name text, birth_date date, email text mobile text)''')
 
 if __name__ == '__main__':
     for rownum in range(sheet.nrows):
@@ -24,11 +24,12 @@ if __name__ == '__main__':
         date = sheet.row_values(rownum)[1]
         formated_date = datetime.datetime(*xlrd.xldate_as_tuple(date, wb.datemode))
         email = sheet.row_values(rownum)[2]
+        mobile = sheet.row_values(rownum)[3]
 
         actual_date = datetime.date(1987, formated_date.month, formated_date.day)
         c.execute(
-            "INSERT INTO friend(name, birth_date, email) values (?, ?, ?)",
-            (name, actual_date, email)
+            "INSERT INTO friend(name, birth_date, email, mobile) values (?, ?, ?)",
+            (name, actual_date, email, mobile)
             )
 
     conn.commit()
