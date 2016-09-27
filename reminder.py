@@ -9,8 +9,13 @@ import smtplib
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 
+from ConfigParser import SafeConfigParser
+
 path = lambda *ps: os.path.join(os.path.dirname(__file__), *ps)
 localpath = lambda p: join(dirname(__file__), p)
+
+parser = SafeConfigParser()
+parser.read('credentials.INI')
 
 conn = sqlite3.connect(
     localpath('friends.db'),
@@ -32,13 +37,14 @@ def birthdays():
 
 def send_email(birthday_members):
     emails = [friend[2] for friend in all_friends] + ['myemail@gmail.com']
-    fromaddr = "myemail@gmail.com"
+    fromaddr = parser.get('GMAIL_CREDENTIALS', 'username')
+    password = parser.get('GMAIL_CREDENTIALS', 'password')
     toaddr = emails
 
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
     server.starttls()
-    server.login(fromaddr, "mypassword")
+    server.login(fromaddr, password)
 
     for member in birthday_members:
         msg = MIMEMultipart()
@@ -61,8 +67,8 @@ def send_email(birthday_members):
 
 
 def send_sms(birthday_members):
-    username = 'mynumber'
-    passwd = 'mypassword'
+    username = parser.get('WAY2SMS_CREDENTIALS', 'username')
+    passwd = parser.get('WAY2SMS_CREDENTIALS', 'password')
 
     # Logging into the SMS Site
     url = 'http://site24.way2sms.com/Login1.action?'
