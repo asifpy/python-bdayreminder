@@ -1,0 +1,1 @@
+CSE BDAY REMINDER : Today {{bday_member}} is going to celebrate his/her birthday. Happy birthday {{bday_member}}

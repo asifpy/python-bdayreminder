@@ -1,13 +1,23 @@
 import sleekxmpp
+import os
 from time import sleep
 
-from helpers import all_friends, birthdays
-from helpers import get_parser
+from jinja2 import Environment, FileSystemLoader
+
+from bdayreminder.helpers import (
+    get_all_emails,
+    get_parser,
+)
 
 
 class Jabber(sleekxmpp.ClientXMPP):
     def __init__(self, username, password, instance_name=None):
-        jid = "%s/%s" % (username, instance_name) if instance_name else username
+
+        jid = "{}/{}".format(
+            username,
+            instance_name
+        ) if instance_name else username
+
         super(Jabber, self).__init__(jid, password)
 
         self.instance_name = instance_name
@@ -48,27 +58,39 @@ class Jabber(sleekxmpp.ClientXMPP):
 
     def receive(self, message):
         if message['type'] in ('chat', 'normal'):
-            from_account = "%s@%s" % (message['from'].user, message['from'].domain)
-
             if self.instance_name in message['body'].lower():
                 message.reply("%s was listening!" % self.instance_name).send()
             else:
                 pass
 
 
-def notify_hangout():
-    """Send hangout message to all friends"""
+class SendHangoutMessage(object):
+    def __init__(self, bday_guy, *args, **kwargs):
+        self.fromaddr = get_parser('GMAIL_CREDENTIALS', 'username')
+        self.password = get_parser('GMAIL_CREDENTIALS', 'password')
 
-    birthday_members = birthdays()
-    for member in birthday_members:
-        message = "CSE BDAY REMINDER : Today is {}'s birthday, so make sure to wish a birthday guy and have lots of fun!. Happy birthday {}".format(member[0], member[0])
-        emails = [friend[2] for friend in all_friends()] + ['saluasif@gmail.com']
+        env = self.jinja_env()
+        self.message = env.get_template('hangout_message.txt')
 
-        for email in emails:
+        self.toaddr = get_all_emails()
+        self.bday_guy = bday_guy
+
+    def __call__(self):
+        self.execute()
+
+    def jinja_env(self):
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        templates_path = os.path.join(current_dir, 'templates')
+
+        loader = FileSystemLoader(templates_path)
+        return Environment(loader=loader)
+
+    def execute(self):
+        message = self.message.render(bday_member=self.bday_guy.name)
+
+        for email in self.toaddr:
             if '@gmail.com' in email:
-                fromaddr = get_parser('GMAIL_CREDENTIALS', 'username')
-                password = get_parser('GMAIL_CREDENTIALS', 'password')
-                jabber = Jabber(fromaddr, password)
+                jabber = Jabber(self.fromaddr, self.password)
                 jabber.send_msg(email, message)
                 sleep(10)
                 jabber.close()

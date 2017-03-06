@@ -1,0 +1,1 @@
+CSE BDAY REMINDER : Today is {{bday_member}}'s birthday, so make sure to wish a birthday guy and have lots of fun!. Happy birthday {{bday_member}}
