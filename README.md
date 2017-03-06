@@ -29,10 +29,18 @@ python bdayreminder/db/makedb.py
 Load Sample Data
 ----------------
 
-Update the `bdayreminder/db/sample_data.py` for your own sample data and then run below command script to load.
+Update the `bdayreminder/db/sample_data.py` for your own sample data and then run below script to load it.
 
 ```
 python bdayreminder/db/sample_data.py
 ```
 
+Send Reminder
+-------------
+
+Run the below script to send reminders using email, sms and hangout:
+
+```
+python bdayreminder/reminder.py
+```
 
