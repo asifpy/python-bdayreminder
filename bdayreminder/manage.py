@@ -25,9 +25,9 @@ def choicesDescriptions():
     return """
         Choices supports the following:
         syncdb              - Creates new sqlite DB with person table
-        loadsampledata      - Loads sample data from db/sample_data.py
+        loadsampledata      - Loads sample data from db/loader.py
         loadexceldata       - loads excel data from db/data/yourexcel.xlsx
-        runreminder         - Run reminder for email, sms and hangout
+        runallreminders     - Run reminder for email, sms and hangout
         runemailreminder    - Run reminder with only email
         runsmsreminder      - Run reminder with only sms
         runhangoutreminder  - Run reminder with only hangout message
