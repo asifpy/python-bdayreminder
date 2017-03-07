@@ -7,7 +7,7 @@ Setup:
 ------
 
 ```shell
-$ git clone https://github.com/asifpy/birthday_reminder.git 
+$ git clone https://github.com/asifpy/python-bdayreminder
 $ cd bdayreminder
 ```
 
@@ -22,8 +22,7 @@ Usage
 -----
 
 ```shell
-
-birthday_reminder$ python3 bdayreminder/manage.py --help
+$ python3 bdayreminder/manage.py --help
 
 usage: Birthday Reminder [-h]
 
