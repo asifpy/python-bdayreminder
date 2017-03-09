@@ -1,35 +1,18 @@
-import os
 from http.cookiejar import CookieJar
 import urllib.request
 
-from jinja2 import Environment, FileSystemLoader
-
-from bdayreminder.helpers import (
-    get_all_mobiles,
-    get_parser
-)
+from bdayreminder.services.base import BaseReminder
+from bdayreminder.helpers import get_all_mobiles
 
 
-class SendSms(object):
+class SendSms(BaseReminder):
+    provider = 'WAY2SMS_CREDENTIALS'
+
     def __init__(self, bday_guy, *args, **kwargs):
-        self.username = get_parser('WAY2SMS_CREDENTIALS', 'username')
-        self.password = get_parser('WAY2SMS_CREDENTIALS', 'password')
+        super(SendSms, self).__init__(bday_guy, *args, **kwargs)
 
-        env = self.jinja_env()
-        self.sms_body = env.get_template('sms_body.txt')
-
+        self.sms_body = self.env.get_template('sms_body.txt')
         self.mobiles = get_all_mobiles()
-        self.bday_guy = bday_guy
-
-    def __call__(self):
-        self.execute()
-
-    def jinja_env(self):
-        current_dir = os.path.dirname(os.path.realpath(__file__))
-        templates_path = os.path.join(current_dir, 'templates')
-
-        loader = FileSystemLoader(templates_path)
-        return Environment(loader=loader)
 
     def execute(self):
         # Logging into the SMS Site

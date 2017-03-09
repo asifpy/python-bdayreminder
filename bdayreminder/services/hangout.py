@@ -1,13 +1,8 @@
 import sleekxmpp
-import os
 from time import sleep
 
-from jinja2 import Environment, FileSystemLoader
-
-from bdayreminder.helpers import (
-    get_all_emails,
-    get_parser,
-)
+from bdayreminder.helpers import get_all_emails
+from bdayreminder.services.base import BaseReminder
 
 
 class Jabber(sleekxmpp.ClientXMPP):
@@ -64,33 +59,21 @@ class Jabber(sleekxmpp.ClientXMPP):
                 pass
 
 
-class SendHangoutMessage(object):
+class SendHangoutMessage(BaseReminder):
+    provider = 'GMAIL_CREDENTIALS'
+
     def __init__(self, bday_guy, *args, **kwargs):
-        self.fromaddr = get_parser('GMAIL_CREDENTIALS', 'username')
-        self.password = get_parser('GMAIL_CREDENTIALS', 'password')
+        super(SendHangoutMessage, self).__init__(bday_guy, *args, **kwargs)
 
-        env = self.jinja_env()
-        self.message = env.get_template('hangout_message.txt')
-
+        self.message = self.env.get_template('hangout_message.txt')
         self.toaddr = get_all_emails()
-        self.bday_guy = bday_guy
-
-    def __call__(self):
-        self.execute()
-
-    def jinja_env(self):
-        current_dir = os.path.dirname(os.path.realpath(__file__))
-        templates_path = os.path.join(current_dir, 'templates')
-
-        loader = FileSystemLoader(templates_path)
-        return Environment(loader=loader)
 
     def execute(self):
         message = self.message.render(bday_member=self.bday_guy.name)
 
         for email in self.toaddr:
             if '@gmail.com' in email:
-                jabber = Jabber(self.fromaddr, self.password)
+                jabber = Jabber(self.username, self.password)
                 jabber.send_msg(email, message)
                 sleep(10)
                 jabber.close()
