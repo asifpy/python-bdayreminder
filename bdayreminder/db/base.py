@@ -3,11 +3,13 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from bdayreminder.settings import DATABASE
+
 # Create an engine that stores data in the local directory's
-# sqlalchemy_example.db file.
+# db file.
 detect_types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES
 engine = create_engine(
-    'sqlite:///bdayreminder.db',
+    'sqlite:///{}'.format(DATABASE),
     connect_args={'detect_types': detect_types},
     native_datetime=True
 )

@@ -1,7 +1,7 @@
-import os
 from jinja2 import Environment, FileSystemLoader
 
 from bdayreminder.helpers import get_parser
+from bdayreminder.settings import TEMPLATE_DIRS
 
 
 class BaseReminder(object):
@@ -15,8 +15,5 @@ class BaseReminder(object):
         self.execute()
 
     def jinja_env(self):
-        current_dir = os.path.dirname(os.path.realpath(__file__))
-        templates_path = os.path.join(current_dir, 'templates')
-
-        loader = FileSystemLoader(templates_path)
+        loader = FileSystemLoader(TEMPLATE_DIRS)
         return Environment(loader=loader)

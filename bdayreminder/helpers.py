@@ -1,10 +1,10 @@
-import os
 import datetime
 from sqlalchemy import extract
 from configparser import ConfigParser
 
 from bdayreminder.db.base import DBSession
 from bdayreminder.db.models import Person
+from bdayreminder.settings import CONFIG_FILE
 
 
 def birthdays():
@@ -36,7 +36,5 @@ def get_all_mobiles():
 
 def get_parser(section, name):
     parser = ConfigParser()
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    config_path = os.path.join(current_dir, 'config.ini')
-    parser.read(config_path)
+    parser.read(CONFIG_FILE)
     return parser.get(section, name)
