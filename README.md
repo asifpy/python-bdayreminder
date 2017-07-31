@@ -9,6 +9,8 @@ Setup:
 ```shell
 $ git clone https://github.com/asifpy/python-bdayreminder
 $ cd bdayreminder
+
+Update bdayreminder/config.ini with your GMAIL and WAY2SMS credentials
 ```
 
 Install Requirements
